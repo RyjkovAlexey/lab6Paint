@@ -1,4 +1,6 @@
-﻿namespace lab6Paint
+﻿using System;
+
+namespace lab6Paint
 {
     partial class Form1
     {
@@ -29,16 +31,17 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.btnBrush = new System.Windows.Forms.Button();
+            this.btnLine = new System.Windows.Forms.Button();
+            this.btnElips = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnRectangle = new System.Windows.Forms.Button();
-            this.btnElips = new System.Windows.Forms.Button();
-            this.btnLine = new System.Windows.Forms.Button();
-            this.btnBrush = new System.Windows.Forms.Button();
-            this.btnSave = new System.Windows.Forms.Button();
             this.pnlColor = new System.Windows.Forms.Panel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
@@ -73,6 +76,54 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(800, 450);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
+            // btnSave
+            // 
+            this.btnSave.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnSave.Location = new System.Drawing.Point(720, 384);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(0);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(80, 66);
+            this.btnSave.TabIndex = 7;
+            this.btnSave.Text = "Сохранить";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
+            // btnBrush
+            // 
+            this.btnBrush.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnBrush.Location = new System.Drawing.Point(720, 192);
+            this.btnBrush.Margin = new System.Windows.Forms.Padding(0);
+            this.btnBrush.Name = "btnBrush";
+            this.btnBrush.Size = new System.Drawing.Size(80, 64);
+            this.btnBrush.TabIndex = 4;
+            this.btnBrush.Text = "Кисть";
+            this.btnBrush.UseVisualStyleBackColor = true;
+            this.btnBrush.Click += new System.EventHandler(this.btnBrush_Click);
+            // 
+            // btnLine
+            // 
+            this.btnLine.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnLine.Location = new System.Drawing.Point(720, 128);
+            this.btnLine.Margin = new System.Windows.Forms.Padding(0);
+            this.btnLine.Name = "btnLine";
+            this.btnLine.Size = new System.Drawing.Size(80, 64);
+            this.btnLine.TabIndex = 3;
+            this.btnLine.Text = "Линия";
+            this.btnLine.UseVisualStyleBackColor = true;
+            this.btnLine.Click += new System.EventHandler(this.btnLine_Click);
+            // 
+            // btnElips
+            // 
+            this.btnElips.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnElips.Location = new System.Drawing.Point(720, 64);
+            this.btnElips.Margin = new System.Windows.Forms.Padding(0);
+            this.btnElips.Name = "btnElips";
+            this.btnElips.Size = new System.Drawing.Size(80, 64);
+            this.btnElips.TabIndex = 2;
+            this.btnElips.Text = "Элипс";
+            this.btnElips.UseVisualStyleBackColor = true;
+            this.btnElips.Click += new System.EventHandler(this.btnEllips_Click);
+            // 
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.SystemColors.ButtonHighlight;
@@ -85,6 +136,7 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
+            this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
             this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
             // 
             // btnRectangle
@@ -97,50 +149,7 @@
             this.btnRectangle.TabIndex = 1;
             this.btnRectangle.Text = "Прямоугольник";
             this.btnRectangle.UseVisualStyleBackColor = true;
-            // 
-            // btnElips
-            // 
-            this.btnElips.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnElips.Location = new System.Drawing.Point(720, 64);
-            this.btnElips.Margin = new System.Windows.Forms.Padding(0);
-            this.btnElips.Name = "btnElips";
-            this.btnElips.Size = new System.Drawing.Size(80, 64);
-            this.btnElips.TabIndex = 2;
-            this.btnElips.Text = "Элипс";
-            this.btnElips.UseVisualStyleBackColor = true;
-            // 
-            // btnLine
-            // 
-            this.btnLine.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnLine.Location = new System.Drawing.Point(720, 128);
-            this.btnLine.Margin = new System.Windows.Forms.Padding(0);
-            this.btnLine.Name = "btnLine";
-            this.btnLine.Size = new System.Drawing.Size(80, 64);
-            this.btnLine.TabIndex = 3;
-            this.btnLine.Text = "Линия";
-            this.btnLine.UseVisualStyleBackColor = true;
-            // 
-            // btnBrush
-            // 
-            this.btnBrush.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnBrush.Location = new System.Drawing.Point(720, 192);
-            this.btnBrush.Margin = new System.Windows.Forms.Padding(0);
-            this.btnBrush.Name = "btnBrush";
-            this.btnBrush.Size = new System.Drawing.Size(80, 64);
-            this.btnBrush.TabIndex = 4;
-            this.btnBrush.Text = "Кисть";
-            this.btnBrush.UseVisualStyleBackColor = true;
-            // 
-            // btnSave
-            // 
-            this.btnSave.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.btnSave.Location = new System.Drawing.Point(720, 384);
-            this.btnSave.Margin = new System.Windows.Forms.Padding(0);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(80, 66);
-            this.btnSave.TabIndex = 7;
-            this.btnSave.Text = "Сохранить";
-            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnRectangle.Click += new System.EventHandler(this.btnRectangle_Click);
             // 
             // pnlColor
             // 
@@ -153,6 +162,7 @@
             this.pnlColor.Name = "pnlColor";
             this.pnlColor.Size = new System.Drawing.Size(80, 64);
             this.pnlColor.TabIndex = 8;
+            this.pnlColor.Click += new System.EventHandler(this.pnlColor_Click);
             // 
             // tableLayoutPanel2
             // 
@@ -191,6 +201,7 @@
             this.trackBar1.Size = new System.Drawing.Size(80, 32);
             this.trackBar1.TabIndex = 1;
             this.trackBar1.Value = 1;
+            this.trackBar1.ValueChanged += new System.EventHandler(this.trackBar1_ValueChanged);
             // 
             // Form1
             // 
@@ -222,6 +233,7 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.ColorDialog colorDialog1;
     }
 }
 
