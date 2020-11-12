@@ -26,14 +26,7 @@ namespace lab6Paint
         private string selectedFigure = "";
         private bool isDown = false;
         private BinaryFormatter formatter = new BinaryFormatter();
-        private List<SerialaizeFigure> serialaizeFigures = new List<SerialaizeFigure>();
-
-        //gr.DrawRectangle(pen,
-        //(pos1.X<pos2.X) ? pos1.X : pos2.X,
-        //(pos1.Y<pos2.Y) ? pos1.Y : pos2.Y,
-        //(pos2.X > pos1.X) ? pos2.X - pos1.X : pos1.X - pos2.X,
-        //(pos2.Y > pos1.Y) ? pos2.Y - pos1.Y : pos1.Y - pos2.Y
-        //);
+        private List<ShapeSerializer> serialaizeFigures = new List<ShapeSerializer>();
 
         public Form1()
         {
@@ -65,7 +58,7 @@ namespace lab6Paint
                 (pos2.X > pos1.X) ? pos2.X - pos1.X : pos1.X - pos2.X,
                 (pos2.Y > pos1.Y) ? pos2.Y - pos1.Y : pos1.Y - pos2.Y
             );
-            serialaizeFigures.Add(new RectangleSerialize(pen.Color,(int)pen.Width,pos1,pos2));
+            serialaizeFigures.Add(new RectangleSerialize(pos1, pos2, colorBrush, width));
         }
 
         public void drawEllips(Point pos1, Point pos2, Graphics gr)
@@ -75,19 +68,19 @@ namespace lab6Paint
                 (pos1.Y < pos2.Y) ? pos1.Y : pos2.Y,
                 (pos2.X > pos1.X) ? pos2.X - pos1.X : pos1.X - pos2.X,
                 (pos2.Y > pos1.Y) ? pos2.Y - pos1.Y : pos1.Y - pos2.Y);
-            serialaizeFigures.Add(new EllipsSerialize(pen.Color,(int)pen.Width,pos1,pos2));
+            serialaizeFigures.Add(new EllipsSerialize(pos1, pos2, colorBrush, width));
         }
 
         public void drawLine(Point pos1, Point pos2, Graphics gr)
         {
             gr.DrawLine(pen, pos1, pos2);
-            serialaizeFigures.Add(new LineSerialize(pen.Color,(int)pen.Width,pos1,pos2));
+            serialaizeFigures.Add(new LineSerialize(pos1, pos2, colorBrush, width));
         }
 
         public void drawBrush(Point pos1, Point pos2, Graphics gr)
         {
             gr.FillEllipse(brush, pos1.X, pos1.Y, pos2.X, pos2.Y);
-            serialaizeFigures.Add(new BrushSerialize(pen.Color,pos2.X,pos1));
+            serialaizeFigures.Add(new BrushSerialize(pos1, width, colorBrush));
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -152,32 +145,33 @@ namespace lab6Paint
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (isDown&&e.Button==MouseButtons.Left&&selectedFigure.Equals("brush"))
+            if (isDown && e.Button == MouseButtons.Left && selectedFigure.Equals("brush"))
             {
-                pos2 = new Point(width,width);
-                figure.Draw(e.Location,pos2,gr);
+                pos2 = new Point(width, width);
+                figure.Draw(e.Location, pos2, gr);
             }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!File.Exists("picture.dat"))
+            using (FileStream fs = new FileStream("picture.dat", FileMode.OpenOrCreate))
             {
-                using (FileStream fs = new FileStream("picture.dat", FileMode.OpenOrCreate))
-                {
-                    formatter.Serialize(fs, serialaizeFigures);
-                }
+                formatter.Serialize(fs, serialaizeFigures);
             }
-            else
+        }
+
+        private void btnOpen_Click(object sender, EventArgs e)
+        {
+            if (File.Exists("picture.dat"))
             {
                 using (FileStream fs = new FileStream("picture.dat", FileMode.OpenOrCreate))
                 {
-                    List<SerialaizeFigure> deseriFigures = (List<SerialaizeFigure>)formatter.Deserialize(fs);
-                    deseriFigures.ForEach(figure =>
+                    var list = (List<ShapeSerializer>) formatter.Deserialize(fs);
+                    list.ForEach(item =>
                     {
-                        figure.Draw(gr);
+                        item.Deserialize(gr);
+                        serialaizeFigures.Add(item);
                     });
-                    pictureBox1.Refresh();
                 }
             }
         }
