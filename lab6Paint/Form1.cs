@@ -22,11 +22,11 @@ namespace lab6Paint
         private Brush brush;
         private Color colorBrush;
         private int width;
-        private Figure figure = new Figure();
-        private string selectedFigure = "";
+        private Draw figure;
+        List<Draw> figures;
+        private string selectedFigure;
         private bool isDown = false;
         private BinaryFormatter formatter = new BinaryFormatter();
-        private List<SerialaizeFigure> serialaizeFigures = new List<SerialaizeFigure>();
 
         //gr.DrawRectangle(pen,
         //(pos1.X<pos2.X) ? pos1.X : pos2.X,
@@ -34,7 +34,6 @@ namespace lab6Paint
         //(pos2.X > pos1.X) ? pos2.X - pos1.X : pos1.X - pos2.X,
         //(pos2.Y > pos1.Y) ? pos2.Y - pos1.Y : pos1.Y - pos2.Y
         //);
-
         public Form1()
         {
             InitializeComponent();
@@ -43,8 +42,8 @@ namespace lab6Paint
             colorBrush = pictureBox1.BackColor;
             brush = createBrush(colorBrush);
             pen = createPen(brush, width);
-            figure.Drawer = drawBrush;
             selectedFigure = "brush";
+            figures = new List<Draw>();
         }
 
         public Pen createPen(Brush br, int width)
@@ -57,7 +56,7 @@ namespace lab6Paint
             return new SolidBrush(color);
         }
 
-        public void drawRect(Point pos1, Point pos2, Graphics gr)
+        public void drawRect(Pen pen, Point pos1, Point pos2, Graphics gr)
         {
             gr.DrawRectangle(pen,
                 (pos1.X < pos2.X) ? pos1.X : pos2.X,
@@ -65,29 +64,25 @@ namespace lab6Paint
                 (pos2.X > pos1.X) ? pos2.X - pos1.X : pos1.X - pos2.X,
                 (pos2.Y > pos1.Y) ? pos2.Y - pos1.Y : pos1.Y - pos2.Y
             );
-            serialaizeFigures.Add(new RectangleSerialize(pen.Color,(int)pen.Width,pos1,pos2));
         }
 
-        public void drawEllips(Point pos1, Point pos2, Graphics gr)
+        public void drawEllips(Pen pen, Point pos1, Point pos2, Graphics gr)
         {
             gr.DrawEllipse(pen,
                 (pos1.X < pos2.X) ? pos1.X : pos2.X,
                 (pos1.Y < pos2.Y) ? pos1.Y : pos2.Y,
                 (pos2.X > pos1.X) ? pos2.X - pos1.X : pos1.X - pos2.X,
                 (pos2.Y > pos1.Y) ? pos2.Y - pos1.Y : pos1.Y - pos2.Y);
-            serialaizeFigures.Add(new EllipsSerialize(pen.Color,(int)pen.Width,pos1,pos2));
         }
 
-        public void drawLine(Point pos1, Point pos2, Graphics gr)
+        public void drawLine(Pen pen, Point pos1, Point pos2, Graphics gr)
         {
             gr.DrawLine(pen, pos1, pos2);
-            serialaizeFigures.Add(new LineSerialize(pen.Color,(int)pen.Width,pos1,pos2));
         }
 
-        public void drawBrush(Point pos1, Point pos2, Graphics gr)
+        public void drawBrush(Brush brush, Point pos, int size, Graphics gr)
         {
-            gr.FillEllipse(brush, pos1.X, pos1.Y, pos2.X, pos2.Y);
-            serialaizeFigures.Add(new BrushSerialize(pen.Color,pos2.X,pos1));
+            gr.FillEllipse(brush, pos1.X, pos1.Y, size, size);
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -96,9 +91,9 @@ namespace lab6Paint
             pos1 = e.Location;
             if (selectedFigure.Equals("brush"))
             {
-                pos2.X = width;
-                pos2.Y = width;
-                figure.Draw(pos1, pos2, gr);
+                figure = new DrawBrush(brush,pnlColor.BackColor,pos1,width,drawBrush);
+                figure.Drawing(gr);
+                figures.Add(figure);
             }
         }
 
@@ -108,7 +103,25 @@ namespace lab6Paint
             if (!selectedFigure.Equals("brush"))
             {
                 pos2 = e.Location;
-                figure.Draw(pos1, pos2, gr);
+                if (selectedFigure.Equals("rectangle"))
+                {
+                    figure = new DrawFigure(pen,pos1,pos2,drawRect);
+                    figure.Drawing(gr);
+                    figures.Add(figure);
+                }
+                if (selectedFigure.Equals("ellips"))
+                {
+                    figure = new DrawFigure(pen, pos1, pos2, drawEllips);
+                    figure.Drawing(gr);
+                    figures.Add(figure);
+                }
+
+                if (selectedFigure.Equals("line"))
+                {
+                    figure = new DrawFigure(pen, pos1, pos2, drawLine);
+                    figure.Drawing(gr);
+                    figures.Add(figure);
+                }
             }
         }
 
@@ -128,56 +141,47 @@ namespace lab6Paint
 
         private void btnRectangle_Click(object sender, EventArgs e)
         {
-            figure.Drawer = drawRect;
             selectedFigure = "rectangle";
         }
 
         private void btnEllips_Click(object sender, EventArgs e)
         {
-            figure.Drawer = drawEllips;
             selectedFigure = "ellips";
         }
 
         private void btnLine_Click(object sender, EventArgs e)
         {
-            figure.Drawer = drawLine;
             selectedFigure = "line";
         }
 
         private void btnBrush_Click(object sender, EventArgs e)
         {
-            figure.Drawer = drawBrush;
             selectedFigure = "brush";
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            if (isDown&&e.Button==MouseButtons.Left&&selectedFigure.Equals("brush"))
+            if (isDown && e.Button == MouseButtons.Left && selectedFigure.Equals("brush"))
             {
-                pos2 = new Point(width,width);
-                figure.Draw(e.Location,pos2,gr);
+                figure = new DrawBrush(brush,pnlColor.BackColor,MousePosition,width,drawBrush);
+                figure.Drawing(gr);
+                figures.Add(figure);
             }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (!File.Exists("picture.dat"))
+            Draw.serialize(figures,formatter);
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            if (File.Exists("picture.dat"))
             {
-                using (FileStream fs = new FileStream("picture.dat", FileMode.OpenOrCreate))
+                using (FileStream fs = new FileStream("picture.dat",FileMode.OpenOrCreate))
                 {
-                    formatter.Serialize(fs, serialaizeFigures);
-                }
-            }
-            else
-            {
-                using (FileStream fs = new FileStream("picture.dat", FileMode.OpenOrCreate))
-                {
-                    List<SerialaizeFigure> deseriFigures = (List<SerialaizeFigure>)formatter.Deserialize(fs);
-                    deseriFigures.ForEach(figure =>
-                    {
-                        figure.Draw(gr);
-                    });
-                    pictureBox1.Refresh();
+                    List<Draw> deserialize = (List<Draw>) formatter.Deserialize(fs);
+                    deserialize.ForEach(item=>item.Drawing(gr));
                 }
             }
         }
