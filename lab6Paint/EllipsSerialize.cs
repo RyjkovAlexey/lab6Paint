@@ -10,26 +10,23 @@ namespace lab6Paint
     [Serializable]
     class EllipsSerialize : ShapeSerializer
     {
-        private Point point1, point2;
+        private int x, y, wight, height, size;
         private Color colorBrush;
-        private int width;
 
-        public EllipsSerialize(Point point1, Point point2, Color colorBrush, int width)
+        public EllipsSerialize(int x, int y, int wight, int height, int size, Color colorBrush)
         {
-            this.point1 = point1;
-            this.point2 = point2;
+            this.x = x;
+            this.y = y;
+            this.wight = wight;
+            this.height = height;
+            this.size = size;
             this.colorBrush = colorBrush;
-            this.width = width;
         }
 
         public override void Deserialize(Graphics graphics)
         {
-            graphics.DrawEllipse(new Pen(new SolidBrush(colorBrush)),
-                (point1.X < point2.X) ? point1.X : point2.X,
-                (point1.Y < point2.Y) ? point1.Y : point2.Y,
-                (point2.X > point1.X) ? point2.X - point1.X : point1.X - point2.X,
-                (point2.Y > point1.Y) ? point2.Y - point1.Y : point1.Y - point2.Y
-            );
+            graphics.DrawEllipse(new Pen(new SolidBrush(colorBrush), this.size),
+                this.x, this.y, this.wight, this.height);
         }
     }
 }

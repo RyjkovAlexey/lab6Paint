@@ -24,7 +24,7 @@ namespace lab6Paint
 
         public override void Deserialize(Graphics graphics)
         {
-            graphics.DrawLine(new Pen(new SolidBrush(colorBrush)),point1,point2);
+            graphics.DrawLine(new Pen(new SolidBrush(colorBrush),width),point1,point2);
         }
     }
 }

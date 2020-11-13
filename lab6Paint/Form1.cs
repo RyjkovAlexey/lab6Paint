@@ -21,7 +21,7 @@ namespace lab6Paint
         private Pen pen;
         private Brush brush;
         private Color colorBrush;
-        private int width;
+        private int size;
         private Figure figure = new Figure();
         private string selectedFigure = "";
         private bool isDown = false;
@@ -32,10 +32,10 @@ namespace lab6Paint
         {
             InitializeComponent();
             gr = pictureBox1.CreateGraphics();
-            width = 1;
+            size = 1;
             colorBrush = Color.Black;
             brush = createBrush(colorBrush);
-            pen = createPen(brush, width);
+            pen = createPen(brush, size);
             figure.Drawer = drawBrush;
             selectedFigure = "brush";
         }
@@ -52,35 +52,34 @@ namespace lab6Paint
 
         public void drawRect(Point pos1, Point pos2, Graphics gr)
         {
-            gr.DrawRectangle(pen,
-                (pos1.X < pos2.X) ? pos1.X : pos2.X,
-                (pos1.Y < pos2.Y) ? pos1.Y : pos2.Y,
-                (pos2.X > pos1.X) ? pos2.X - pos1.X : pos1.X - pos2.X,
-                (pos2.Y > pos1.Y) ? pos2.Y - pos1.Y : pos1.Y - pos2.Y
-            );
-            serialaizeFigures.Add(new RectangleSerialize(pos1, pos2, colorBrush, width));
+            int x = (pos1.X < pos2.X) ? pos1.X : pos2.X;
+            int y = (pos1.Y < pos2.Y) ? pos1.Y : pos2.Y;
+            int width = (pos2.X > pos1.X) ? pos2.X - pos1.X : pos1.X - pos2.X;
+            int height = (pos2.Y > pos1.Y) ? pos2.Y - pos1.Y : pos1.Y - pos2.Y;
+            gr.DrawRectangle(pen, x, y, width, height);
+            serialaizeFigures.Add(new RectangleSerialize(x,y,width,height,size,colorBrush));
         }
 
         public void drawEllips(Point pos1, Point pos2, Graphics gr)
         {
-            gr.DrawEllipse(pen,
-                (pos1.X < pos2.X) ? pos1.X : pos2.X,
-                (pos1.Y < pos2.Y) ? pos1.Y : pos2.Y,
-                (pos2.X > pos1.X) ? pos2.X - pos1.X : pos1.X - pos2.X,
-                (pos2.Y > pos1.Y) ? pos2.Y - pos1.Y : pos1.Y - pos2.Y);
-            serialaizeFigures.Add(new EllipsSerialize(pos1, pos2, colorBrush, width));
+            int x = (pos1.X < pos2.X) ? pos1.X : pos2.X;
+            int y = (pos1.Y < pos2.Y) ? pos1.Y: pos2.Y;
+            int width = (pos2.X > pos1.X) ? pos2.X - pos1.X : pos1.X - pos2.X;
+            int height = (pos2.Y > pos1.Y) ? pos2.Y - pos1.Y : pos1.Y - pos2.Y;
+            gr.DrawEllipse(pen,x,y,width,height);
+            serialaizeFigures.Add(new EllipsSerialize(x,y,width,height,size,colorBrush));
         }
 
         public void drawLine(Point pos1, Point pos2, Graphics gr)
         {
             gr.DrawLine(pen, pos1, pos2);
-            serialaizeFigures.Add(new LineSerialize(pos1, pos2, colorBrush, width));
+            serialaizeFigures.Add(new LineSerialize(pos1, pos2, colorBrush, size));
         }
 
         public void drawBrush(Point pos1, Point pos2, Graphics gr)
         {
             gr.FillRectangle(brush, pos1.X, pos1.Y, pos2.X, pos2.Y);
-            serialaizeFigures.Add(new BrushSerialize(pos1, width, colorBrush));
+            serialaizeFigures.Add(new BrushSerialize(pos1, size, colorBrush));
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -89,8 +88,8 @@ namespace lab6Paint
             pos1 = e.Location;
             if (selectedFigure.Equals("brush"))
             {
-                pos2.X = width;
-                pos2.Y = width;
+                pos2.X = size;
+                pos2.Y = size;
                 figure.Draw(pos1, pos2, gr);
             }
         }
@@ -110,13 +109,13 @@ namespace lab6Paint
             colorBrush = (colorDialog1.ShowDialog() == DialogResult.OK) ? colorDialog1.Color : pnlColor.BackColor;
             pnlColor.BackColor = colorBrush;
             brush = createBrush(colorBrush);
-            pen = createPen(brush, width);
+            pen = createPen(brush, size);
         }
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            width = trackBar1.Value;
-            pen.Width = width;
+            size = trackBar1.Value;
+            pen.Width = size;
         }
 
         private void btnRectangle_Click(object sender, EventArgs e)
@@ -147,7 +146,7 @@ namespace lab6Paint
         {
             if (isDown && e.Button == MouseButtons.Left && selectedFigure.Equals("brush"))
             {
-                pos2 = new Point(width, width);
+                pos2 = new Point(size, size);
                 figure.Draw(e.Location, pos2, gr);
             }
         }
@@ -174,6 +173,12 @@ namespace lab6Paint
                     });
                 }
             }
+        }
+
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+            gr = pictureBox1.CreateGraphics();
+            serialaizeFigures.ForEach(item=>item.Deserialize(gr));
         }
     }
 }
