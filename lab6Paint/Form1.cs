@@ -79,7 +79,7 @@ namespace lab6Paint
 
         public void drawBrush(Point pos1, Point pos2, Graphics gr)
         {
-            gr.FillEllipse(brush, pos1.X, pos1.Y, pos2.X, pos2.Y);
+            gr.FillRectangle(brush, pos1.X, pos1.Y, pos2.X, pos2.Y);
             serialaizeFigures.Add(new BrushSerialize(pos1, width, colorBrush));
         }
 

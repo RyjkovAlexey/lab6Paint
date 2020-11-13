@@ -23,7 +23,7 @@ namespace lab6Paint
 
         public override void Deserialize(Graphics graphics)
         {
-            graphics.FillEllipse(new SolidBrush(brushColor), point.X, point.Y, width, width);
+            graphics.FillRectangle(new SolidBrush(brushColor), point.X, point.Y, width, width);
         }
     }
 }
