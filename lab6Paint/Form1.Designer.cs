@@ -40,10 +40,10 @@ namespace lab6Paint
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
-            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.btnSave = new System.Windows.Forms.Button();
             this.btnOpen = new System.Windows.Forms.Button();
+            this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.tableLayoutPanel2.SuspendLayout();
@@ -144,7 +144,7 @@ namespace lab6Paint
             // 
             // pnlColor
             // 
-            this.pnlColor.BackColor = System.Drawing.Color.White;
+            this.pnlColor.BackColor = System.Drawing.Color.Black;
             this.pnlColor.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.pnlColor.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.pnlColor.Dock = System.Windows.Forms.DockStyle.Fill;

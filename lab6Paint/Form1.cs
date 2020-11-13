@@ -33,7 +33,7 @@ namespace lab6Paint
             InitializeComponent();
             gr = pictureBox1.CreateGraphics();
             width = 1;
-            colorBrush = pictureBox1.BackColor;
+            colorBrush = Color.Black;
             brush = createBrush(colorBrush);
             pen = createPen(brush, width);
             figure.Drawer = drawBrush;
